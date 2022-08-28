@@ -1,0 +1,31 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Hacer la limpieza",
+      "description": "Limpiar la cocina"
+    },
+    {
+      "id": 2,
+      "title": "Ir a comprar",
+      "description": "Ir a la tienda de la esquina"
+    },
+    {
+      "id": 3,
+      "title": "Realizar tarea de la escuela",
+      "description": "Hacer la tarea de matematica"
+    }
+  ],
+  "products": [
+    {
+      "name": "sad",
+      "price": 123,
+      "id": 12
+    },
+    {
+      "name": "ascasc",
+      "price": 1212,
+      "id": 13
+    }
+  ]
+}

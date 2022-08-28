@@ -1,0 +1,65 @@
+<section class="mx-3">
+  <div class="alert alert-success" *ngIf="success">{{ success }}</div>
+  <div class="alert alert-danger" *ngIf="error">{{ error }}</div>
+
+  <form
+    class="mx-auto mt-5 col-12 col-sm-8 col-md-6"
+    (ngSubmit)="onSubmit(contactForm.value)"
+    #contactForm="ngForm"
+  >
+    <div class="mb-3">
+      <label for="name" class="form-label">Nombre del producto</label>
+      <input
+        type="text"
+        [ngClass]="{
+          'form-control': true,
+          'is-valid': name.valid ,
+          'is-invalid': name.invalid && !name.pristine
+        }"
+        id="name"
+        name="name"
+        ngModel
+        pattern="[a-zA-Z0-9]{3,16}"
+        required
+        #name="ngModel"
+      />
+      <div [hidden]="name.valid || name.pristine" class="invalid-feedback">
+        Este campo debe tener enter 3 y 16 letras o numeros
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="price" class="form-label">Precio del producto</label>
+      <input
+        type="number"
+        [ngClass]="{
+          'form-control': true,
+          'is-valid': price.valid,
+          'is-invalid': price.invalid && !price.pristine
+        }"
+        id="price"
+        name="price"
+        ngModel
+        required
+        #price="ngModel"
+      />
+      <div [hidden]="price.valid || price.pristine" class="invalid-feedback">
+        Este campo es requerido
+      </div>
+    </div>
+    <div class="col-7 mx-auto mt-3">
+      <button
+        type="submit"
+        [disabled]="contactForm.invalid"
+        class="btn btn-success col-12"
+      >
+        Crear producto
+      </button>
+    </div>
+    <div class="col-7 mx-auto mt-3">
+      <button type="submit" class="btn btn-primary col-12" (click)="onBack()">
+        Volver
+      </button>
+    </div>
+  </form>
+</section>
