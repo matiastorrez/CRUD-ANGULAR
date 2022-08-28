@@ -9,10 +9,12 @@ import { ProductService } from '@data/services/api/product/product.service';
 })
 export class ProductComponent implements OnInit {
   @Input() product: Product = { id: 0, name: '', price: 0 };
-
   @Output() refreshProducts = new EventEmitter();
 
-  constructor(private productService: ProductService) {}
+
+  constructor(
+    private productService: ProductService
+  ) {}
 
   ngOnInit(): void {}
 
@@ -21,8 +23,6 @@ export class ProductComponent implements OnInit {
       .deleteProduct(this.product.id)
       .subscribe(() => this.refreshProducts.emit());
   }
-
-
 
   getProduct() {
     this.productService.getProduct(this.product.id).subscribe((data) => {

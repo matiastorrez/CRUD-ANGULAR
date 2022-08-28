@@ -4,8 +4,8 @@
 
   <form
     class="mx-auto mt-5 col-12 col-sm-8 col-md-6"
-    (ngSubmit)="onSubmit(contactForm.value)"
-    #contactForm="ngForm"
+    (ngSubmit)="onSubmit()"
+    [formGroup]="createProductForm"
   >
     <div class="mb-3">
       <label for="name" class="form-label">Nombre del producto</label>
@@ -13,18 +13,25 @@
         type="text"
         [ngClass]="{
           'form-control': true,
-          'is-valid': name.valid ,
-          'is-invalid': name.invalid && !name.pristine
+          'is-valid': isValidField('name'),
+          'is-invalid':isInvalidField('name')
         }"
         id="name"
         name="name"
-        ngModel
-        pattern="[a-zA-Z0-9]{3,16}"
-        required
-        #name="ngModel"
+        formControlName="name"
       />
-      <div [hidden]="name.valid || name.pristine" class="invalid-feedback">
+      <div
+        *ngIf="createProductForm.get('name')?.errors?.['pattern']"
+        class="invalid-feedback"
+      >
         Este campo debe tener enter 3 y 16 letras o numeros
+      </div>
+
+      <div
+        *ngIf="createProductForm.get('name')?.errors?.['required']"
+        class="invalid-feedback"
+      >
+        Este campo no debe estar vacio
       </div>
     </div>
 
@@ -34,23 +41,24 @@
         type="number"
         [ngClass]="{
           'form-control': true,
-          'is-valid': price.valid,
-          'is-invalid': price.invalid && !price.pristine
-        }"
+          'is-valid': isValidField('price'),
+          'is-invalid':isInvalidField('price')}"
         id="price"
         name="price"
-        ngModel
-        required
-        #price="ngModel"
+        formControlName="price"
       />
-      <div [hidden]="price.valid || price.pristine" class="invalid-feedback">
+      <div
+        *ngIf="createProductForm.get('price')?.errors?.['required']"
+        class="invalid-feedback"
+      >
         Este campo es requerido
       </div>
+
     </div>
     <div class="col-7 mx-auto mt-3">
       <button
         type="submit"
-        [disabled]="contactForm.invalid"
+        [disabled]="createProductForm.invalid"
         class="btn btn-success col-12"
       >
         Crear producto

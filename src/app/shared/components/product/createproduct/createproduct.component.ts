@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CreateProductDTO } from '@data/interfaces/product';
 import { ProductService } from '@data/services/api/product/product.service';
@@ -9,24 +10,67 @@ import { ProductService } from '@data/services/api/product/product.service';
   styleUrls: ['./createproduct.component.scss'],
 })
 export class CreateproductComponent implements OnInit {
-  constructor(private productService: ProductService, private router: Router) {}
   success!: string;
   error!: string;
 
+  constructor(
+    private productService: ProductService,
+    private router: Router,
+    private fb: FormBuilder
+  ) {}
+  createProductForm = this.fb.group({
+    name: [
+      '',
+      [Validators.pattern('^[a-zA-Z0-9]{3,16}$'), Validators.required],
+    ],
+    price: [0, [Validators.required]],
+  });
+
   ngOnInit(): void {}
 
-  onSubmit(productDTO: CreateProductDTO): void {
-    console.log(productDTO);
-    this.createProduct(productDTO);
+  onSubmit(): void {
+    let newProductDTO: CreateProductDTO = {
+      name: this.createProductForm.get('name')?.value || '',
+      price: this.createProductForm.get('price')?.value || 0,
+    };
+
+    this.createProduct(newProductDTO);
   }
 
   createProduct(newProductDTO: CreateProductDTO) {
-    console.log(newProductDTO);
-    this.productService.createProduct(newProductDTO).subscribe();
-    this.success = "Completado correctamente"
+    if (this.createProductForm.valid) {
+      this.productService.createProduct(newProductDTO).subscribe(() => {
+        this.resetForm();
+      });
+      this.success = 'Completado correctamente';
+    } else {
+      this.createProductForm.markAllAsTouched();
+    }
   }
 
   onBack() {
     this.router.navigate(['/products']);
+  }
+
+  isInvalidField(name: string): boolean {
+    const fieldName = this.createProductForm.get(name);
+    if (fieldName) {
+      return fieldName?.invalid && fieldName?.touched;
+    } else {
+      return false;
+    }
+  }
+
+  isValidField(name: string): boolean {
+    const fieldName = this.createProductForm.get(name);
+    if (fieldName) {
+      return fieldName?.valid && fieldName?.touched;
+    } else {
+      return false;
+    }
+  }
+
+  private resetForm(): void {
+    this.createProductForm.reset();
   }
 }
