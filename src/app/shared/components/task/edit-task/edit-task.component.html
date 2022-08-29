@@ -1,1 +1,67 @@
-<p>edit-task works!</p>
+<section class="mx-3">
+  <div class="alert alert-success" *ngIf="success">{{ success }}</div>
+  <div class="alert alert-danger" *ngIf="error">{{ error }}</div>
+
+  <form
+    class="mx-auto mt-5 col-12 col-sm-8 col-md-6"
+    (ngSubmit)="onSubmit()"
+    [formGroup]="updateTaskForm"
+  >
+    <div class="mb-3">
+      <label for="title" class="form-label">Titulo de la tarea</label>
+      <input
+        type="text"
+        [ngClass]="{
+          'form-control': true,
+          'is-valid': isValidField('title'),
+          'is-invalid': isInvalidField('title')
+        }"
+        id="title"
+        name="title"
+        formControlName="title"
+      />
+      <div
+        *ngIf="updateTaskForm.get('title')?.errors?.['required']"
+        class="invalid-feedback"
+      >
+        Este campo no debe estar vacio
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label"
+        >Descripcion de la tarea</label
+      >
+      <textarea
+        [ngClass]="{
+          'form-control': true,
+          'is-valid': isValidField('description'),
+          'is-invalid': isInvalidField('description')
+        }"
+        id="description"
+        name="description"
+        formControlName="description"
+      ></textarea>
+      <div
+        *ngIf="updateTaskForm.get('description')?.errors?.['required']"
+        class="invalid-feedback"
+      >
+        Este campo es requerido
+      </div>
+    </div>
+    <div class="col-7 mx-auto mt-3">
+      <button
+        type="submit"
+        [disabled]="updateTaskForm.invalid"
+        class="btn btn-success col-12"
+      >
+        Editar tarea
+      </button>
+    </div>
+    <div class="col-7 mx-auto mt-3">
+      <button type="submit" class="btn btn-primary col-12" (click)="onBack()">
+        Volver
+      </button>
+    </div>
+  </form>
+</section>

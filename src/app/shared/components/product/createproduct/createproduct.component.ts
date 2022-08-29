@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CreateProductDTO } from '@data/interfaces/product';
 import { ProductService } from '@data/services/api/product/product.service';
@@ -12,44 +12,52 @@ import { ProductService } from '@data/services/api/product/product.service';
 export class CreateproductComponent implements OnInit {
   success!: string;
   error!: string;
+  createProductForm!: FormGroup;
+
+  createProductDTO: CreateProductDTO = {
+    name: '',
+    price: 0,
+  };
 
   constructor(
     private productService: ProductService,
     private router: Router,
     private fb: FormBuilder
   ) {}
-  createProductForm = this.fb.group({
-    name: [
-      '',
-      [Validators.pattern('^[a-zA-Z0-9]{3,16}$'), Validators.required],
-    ],
-    price: [0, [Validators.required]],
-  });
 
-  ngOnInit(): void {}
-
-  onSubmit(): void {
-    let newProductDTO: CreateProductDTO = {
-      name: this.createProductForm.get('name')?.value || '',
-      price: this.createProductForm.get('price')?.value || 0,
-    };
-
-    this.createProduct(newProductDTO);
+  ngOnInit(): void {
+    this.initForm();
   }
 
-  createProduct(newProductDTO: CreateProductDTO) {
+  onSubmit(): void {
     if (this.createProductForm.valid) {
-      this.productService.createProduct(newProductDTO).subscribe(() => {
-        this.resetForm();
-      });
-      this.success = 'Completado correctamente';
+      this.createProduct();
     } else {
       this.createProductForm.markAllAsTouched();
     }
   }
 
+  createProduct() {
+    this.createProductDTO = this.createProductForm.value;
+    this.productService.createProduct(this.createProductDTO).subscribe(() => {
+      this.resetForm();
+      this.error = '';
+      this.success = 'Completado correctamente';
+    });
+  }
+
   onBack() {
     this.router.navigate(['/products']);
+  }
+
+  initForm(): void {
+    this.createProductForm = this.fb.nonNullable.group({
+      name: [
+        '',
+        [Validators.pattern('^[a-zA-Z0-9]{3,16}$'), Validators.required],
+      ],
+      price: [0, [Validators.required]],
+    });
   }
 
   isInvalidField(name: string): boolean {

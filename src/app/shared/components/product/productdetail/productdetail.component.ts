@@ -22,17 +22,14 @@ export class ProductdetailComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       this.id = Number(params.get('id'));
+      this.getProduct();
     });
-
-    this.getProduct();
   }
 
   deleteProduct(): void {
-    this.productService
-      .deleteProduct(this.product.id)
-      .subscribe(() => {
-        this.onBack();
-      });
+    this.productService.deleteProduct(this.product.id).subscribe(() => {
+      this.onBack();
+    });
   }
 
   getProduct() {
