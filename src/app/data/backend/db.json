@@ -8,16 +8,6 @@
   ],
   "products": [
     {
-      "name": "sad",
-      "price": 123,
-      "id": 12
-    },
-    {
-      "name": "ascasc",
-      "price": 1212,
-      "id": 13
-    },
-    {
       "name": "Matias",
       "price": 255555,
       "id": 14

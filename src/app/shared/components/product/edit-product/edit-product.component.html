@@ -1,11 +1,21 @@
 <section class="mx-3">
-  <div class="alert alert-success col-12 col-sm-8 col-md-6 mx-auto mt-5"  *ngIf="success">{{ success }}</div>
-  <div class="alert alert-danger col-12 col-sm-8 col-md-6 mx-auto mt-5" *ngIf="error">{{ error }}</div>
+  <div
+    class="alert alert-success col-12 col-sm-8 col-md-6 mx-auto mt-5"
+    *ngIf="success"
+  >
+    {{ success }}
+  </div>
+  <div
+    class="alert alert-danger col-12 col-sm-8 col-md-6 mx-auto mt-5"
+    *ngIf="error"
+  >
+    {{ error }}
+  </div>
 
   <form
     class="mx-auto mt-5 col-12 col-sm-8 col-md-6"
-    (ngSubmit)="onSubmit(contactForm.value)"
-    #contactForm="ngForm"
+    (ngSubmit)="onSubmit()"
+    [formGroup]="editProductForm"
   >
     <div class="mb-3">
       <label for="name" class="form-label">Nombre del producto</label>
@@ -13,18 +23,26 @@
         type="text"
         [ngClass]="{
           'form-control': true,
-          'is-valid': name.valid && !name.pristine ,
-          'is-invalid': name.invalid && !name.pristine
+          'is-valid': isValidField('name'),
+          'is-invalid': isInvalidField('name')
         }"
         id="name"
         name="name"
-        [(ngModel)]="product.name"
+        formControlName="name"
         pattern="[a-zA-Z0-9]{3,16}"
-        required
-        #name="ngModel"
       />
-      <div [hidden]="name.valid || name.pristine" class="invalid-feedback">
+      <div
+        *ngIf="editProductForm.get('name')?.errors?.['pattern']"
+        class="invalid-feedback"
+      >
         Este campo debe tener enter 3 y 16 letras o numeros
+      </div>
+
+      <div
+        *ngIf="editProductForm.get('name')?.errors?.['required']"
+        class="invalid-feedback"
+      >
+        Este campo no debe estar vacio
       </div>
     </div>
 
@@ -34,16 +52,17 @@
         type="number"
         [ngClass]="{
           'form-control': true,
-          'is-valid': price.valid && !price.pristine,
-          'is-invalid': price.invalid && !price.pristine
+          'is-valid': isValidField('price'),
+          'is-invalid': isInvalidField('price')
         }"
         id="price"
         name="price"
-        [(ngModel)]="this.product.price"
-        required
-        #price="ngModel"
+        formControlName="price"
       />
-      <div [hidden]="price.valid || price.pristine" class="invalid-feedback">
+      <div
+        *ngIf="editProductForm.get('price')?.errors?.['required']"
+        class="invalid-feedback"
+      >
         Este campo es requerido
       </div>
     </div>
@@ -51,7 +70,7 @@
     <div class="col-7 mx-auto mt-3">
       <button
         type="submit"
-        [disabled]="contactForm.invalid"
+        [disabled]="editProductForm.invalid"
         class="btn btn-success col-12"
       >
         Editar producto

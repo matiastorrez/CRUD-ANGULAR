@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Product, UpdateProductDTO } from '@data/interfaces/product';
 import { ProductService } from '@data/services/api/product/product.service';
@@ -10,15 +11,23 @@ import { ProductService } from '@data/services/api/product/product.service';
 })
 export class EditProductComponent implements OnInit {
   id: number = 0;
-  product: Product = { id: 0, name: '', price: 0 };
   success!: string;
   error!: string;
+  editProductForm!: FormGroup;
+
+  updateProductDTO: UpdateProductDTO = {
+    name: '',
+    price: 0,
+  };
 
   constructor(
     private productService: ProductService,
     private router: Router,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private fb: FormBuilder
+  ) {
+    this.initForm();
+  }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
@@ -27,13 +36,28 @@ export class EditProductComponent implements OnInit {
     });
   }
 
-  onSubmit(productDTO: UpdateProductDTO): void {
-    this.editProduct(productDTO);
+  onSubmit(): void {
+    if (this.editProductForm.valid) {
+      this.editProduct();
+    } else {
+      this.editProductForm.markAllAsTouched();
+    }
   }
 
-  editProduct(updateProductDTO: UpdateProductDTO) {
+  initForm(): void {
+    this.editProductForm = this.fb.nonNullable.group({
+      name: [
+        '',
+        [Validators.pattern('^[a-zA-Z0-9]{3,16}$'), Validators.required],
+      ],
+      price: [0, [Validators.required]],
+    });
+  }
+
+  editProduct() {
+    this.updateProductDTO = this.editProductForm.value;
     this.productService
-      .updateProduct(this.product.id, updateProductDTO)
+      .updateProduct(this.id, this.updateProductDTO)
       .subscribe(() => {
         this.success = 'Editado correctamente';
       });
@@ -41,11 +65,29 @@ export class EditProductComponent implements OnInit {
 
   getProduct() {
     this.productService.getProduct(this.id).subscribe((data) => {
-      this.product = data;
+      this.editProductForm.patchValue(data);
     });
   }
 
   onBack() {
     this.router.navigate(['/products']);
+  }
+
+  isInvalidField(name: string): boolean {
+    const fieldName = this.editProductForm.get(name);
+    if (fieldName) {
+      return fieldName?.invalid && fieldName?.touched;
+    } else {
+      return false;
+    }
+  }
+
+  isValidField(name: string): boolean {
+    const fieldName = this.editProductForm.get(name);
+    if (fieldName) {
+      return fieldName?.valid && fieldName?.touched;
+    } else {
+      return false;
+    }
   }
 }
